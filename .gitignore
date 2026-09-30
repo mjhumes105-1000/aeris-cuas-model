@@ -1,0 +1,22 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Large public datasets - download separately (Copernicus GLO-30 DEM,
+# ESA WorldCover 2021). The WorldCover tile alone exceeds GitHub's 100 MB limit.
+data/*.tif
+
+# Generated MATLAB outputs (sweeps, run logs, videos) - regenerate by running the tools
+matlab/matlab_out/
+*.mat
+*.mp4
+
+# Old local snapshots
+_archive/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
