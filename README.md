@@ -12,11 +12,30 @@ are based on the open-source **[AERIS-10](https://github.com/NawfalMotii79/PLFM_
 radar by NawfalMotii79 — full acknowledgments in
 [Credits](#credits-and-acknowledgments).
 
-> Independent personal project. Not affiliated with or endorsed by the U.S.
-> Navy, the Department of Defense, or any academic institution. All radar
-> parameters are provisional placeholders from public datasheets and
-> open-source designs. This is a high-fidelity *model*, not a validated
-> digital twin — it has not been checked against physical hardware.
+> **Disclaimer.** This is an independent personal project. It is not
+> affiliated with, sponsored by, or endorsed by the Department of War (DoW),
+> the Department of the Navy (DON), or any academic institution, and it does
+> not represent their views. It uses only open-source tools and publicly
+> available information. All radar parameters are provisional placeholders
+> from public datasheets and open-source designs. This is a high-fidelity
+> *model*, not a validated digital twin — it has not been checked against
+> physical hardware.
+
+## Motivation
+
+Small, cheap drones have changed the problem for small, spread-out units.
+Stopping a drone is only possible if someone sees it coming in time, and the
+radars that do that well are large, power-hungry, and expensive — too
+expensive to put everywhere a small team needs warning.
+
+Open-source hardware like AERIS-10 raises a different question: **could a
+low-cost, attritable radar node give a unit enough warning, and if so, where
+would it have to sit and what would it need to see?** I'm an electrical
+engineer, and I wanted to answer that end to end — not with a single
+link-budget number, but with a model that carries the physics all the way
+through tracking, the network, power and cost, and the picture an operator
+actually sees. A clear "no, and here is the parameter that breaks it" would
+count as an answer too.
 
 ## Showcase
 
@@ -85,6 +104,66 @@ aeris_upgrade_trade            % GaN PA / SDR / array upgrade trade study
 
 More in [`matlab/README_matlab.md`](matlab/README_matlab.md) and
 [`docs/fidelity_roadmap.md`](docs/fidelity_roadmap.md).
+
+## What I learned
+
+- **Advertised range is not reliable range.** A range only means something
+  with a target size and a detection probability attached. Defined as 90%
+  detection on a 0.03 m² drone, the 10N-class node reaches ~1.8 km, not 3 km.
+- **Speed and placement matter as much as sensitivity.** Most failed
+  engagements were fast threats that a better radar would not have saved;
+  where the node sits and how early it looks mattered as much as how far it
+  sees.
+- **A cliff in the results is often a cliff in the model.** Pass/fail models
+  of the comms link and the sector edge produced sharp drop-offs that looked
+  like findings. Replacing them with graceful physics (packet loss that
+  degrades with distance, antenna gain that rolls off at the edge) removed
+  the cliffs and lowered the headline by ~3 points — the honest direction.
+- **One hidden gate can zero a whole study.** A comms check made every
+  network confirmation fail in a batch run, and it first looked like a
+  physics problem. Sanity-checking intermediate numbers, not just the final
+  statistic, found it.
+- **More fidelity is not always a different answer.** Adding the real RF
+  chain gained 2.6 dB; processing the signal at IQ level cost 2.5 dB. They
+  nearly cancelled, so the headline range survived — which is itself
+  evidence the simpler model was sound.
+- **Intuition about weather was wrong.** At X-band, rain matters and fog
+  essentially does not; the ITU models settled it.
+- **The better sensor is not always the better system.** The 360° 10X wins
+  on every sensing metric and loses on power, weight, cost, and endurance.
+  Hardware details decide the budget, too: a GaN amplifier's standby current
+  dominates its power draw, and the driver amplifier it needs costs more
+  than the amplifier itself.
+- **Watching it run is a test.** Rendering the demos exposed bugs that
+  reading the code had missed — tracks that blinked between sweeps and a
+  panel that showed the wrong targets.
+- **Structure keeps a big model honest.** One shared physics package, one
+  parameter file, SI units inside and unit conversion only at the display,
+  so a dozen tools cannot drift apart.
+
+## Next iteration
+
+- **Validate against hardware.** Bench and field tests with corner
+  reflectors of known size (a 5 cm trihedral is ~0.03 m² at 10.25 GHz) and
+  GPS-logged drone flights, to confirm or calibrate each subsystem.
+- **Replace placeholders with real specs.** Noise figure, losses, waveform,
+  and scan timing from published or measured AERIS-10 data; in particular
+  the chirp bandwidth, which sets how finely targets are separated in range.
+- **Model the transmit/receive front end.** Receiver protection, and the
+  blind zone while the pulse is transmitting, which the higher-power
+  upgrade makes important.
+- **Better clutter.** The clutter-suppression factor is the model's most
+  sensitive unknown; measure it, and model the oscillator phase noise that
+  limits it.
+- **Harder targets and tracking.** Maneuvering targets (interacting multiple
+  models), dense swarms (multi-target data association), and a classifier
+  trained on measured drone and bird signatures.
+- **Real terrain in the MATLAB model.** The Python stack already uses real
+  elevation data; bring it into the MATLAB model end to end.
+- **Pin down the requirement.** The 5-minute warning target is a working
+  assumption; derive it from how a unit would actually use the warning.
+- **Automated MATLAB tests** alongside the Python suite, so the two stay in
+  step.
 
 ## Python simulation stack (Levels 1-4)
 
