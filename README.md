@@ -37,6 +37,15 @@ through tracking, the network, power and cost, and the picture an operator
 actually sees. A clear "no, and here is the parameter that breaks it" would
 count as an answer too.
 
+## How this was built
+
+I built this with Claude Code (Anthropic) as an AI pair-programmer — most of
+the code was written by the AI at my direction. My part was the problem and
+the judgment: framing the question from military operational experience,
+deciding what to model and what mattered, checking results against physics
+and intuition, and catching where the model was wrong (for example, a comms
+model that failed like a cliff instead of degrading gradually).
+
 ## Showcase
 
 **AERIS-10N** — fixed 90° sector, electronically scanned, short range:
