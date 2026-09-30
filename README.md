@@ -7,7 +7,10 @@ to simulated IQ samples, up through tracking, classification, networking, and
 the operator's map.
 
 A personal project by **Mark Humes**, built entirely on open-source tools and
-publicly available information.
+publicly available information. The two radar architectures modelled here
+are based on the open-source **[AERIS-10](https://github.com/NawfalMotii79/PLFM_RADAR)**
+radar by NawfalMotii79 — full acknowledgments in
+[Credits](#credits-and-acknowledgments).
 
 > Independent personal project. Not affiliated with or endorsed by the U.S.
 > Navy, the Department of Defense, or any academic institution. All radar
